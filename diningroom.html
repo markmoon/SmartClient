@@ -1,0 +1,89 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+
+<link rel="stylesheet" type="text/css" href="jqmobile/jquery.mobile-1.0.min.css" />
+<script src="jqmobile/jquery.js"></script>
+<script src="jqmobile/jquery.mobile-1.0.min.js"></script>
+<script src="scripts/jquerycookies.js"></script>
+
+<script type="text/javascript">
+
+$(document).ready(function() {
+	delayrun("getstatus()",300)
+	var timeid;
+	timeid = setInterval("getstatus();", 3000);
+});
+
+function control_turn(text, id)
+{
+	stas = $('#' + text).val();
+	var statu = $.cookie(text + '_turn');
+	if (statu == stas) {
+		
+	} else {
+		$.cookie(text + '_turn',stas,{expires:7});
+		var passed = $.cookie('passed');
+		var poststr = "passed=" + passed + "&turn=" + id + "&stas=" + stas;
+		rexseeAjax.submitWithCallback($.cookie('common_addr') + "turns.cgi", poststr, "UTF-8");
+	}
+}
+
+function getstatus() {
+	var passed = $.cookie('passed');
+	var poststr = "passed=" + passed + "&device=" + 203 + "&number=" + 16;
+	rexseeAjax.submitWithCallback($.cookie('common_addr') + "getstatus.cgi", poststr, "UTF-8");
+}
+
+function onAjaxReturned(ajaxUrl, response) {
+	var res = unescape(response);
+	if (ajaxUrl == $.cookie('common_addr') + "getstatus.cgi") {
+		var canting = subResponse("turn1",res);
+		$.cookie('canting_turn',canting,{expires:7});
+		freshslider("canting", canting);
+	} else {
+		var turn = subResponse("turn",res);
+		var statuss = subResponse("statuss",res);
+		rexseeDialog.toast(turn + ": " + statuss, "color:red;font-size:24px;");
+	}
+}
+</script>
+
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width,minimum-scale=1,maximum-scale=1"/>
+<title>Smarthome 餐厅</title>
+</head>
+
+<body>
+
+<div data-role="page" id="dining" data-title="Smarthome 餐厅">
+	<div data-role="header" data-position="fixed">
+		<a href=""  data-rel="back" data-icon="back">返回</a>
+		<h1>餐厅</h1>
+		<a href="javascript:window.location.reload();" data-icon="refresh">刷新</a>
+	</div>
+	<div data-role="content">
+		<div data-role="fieldcontain">
+			<label for="canting">餐厅灯</label>
+			<select name="canting" id="canting" onchange=delayrun("control_turn('canting',1)",300) data-role="slider">
+				<option value="0">关</option>
+				<option value="1">开</option>
+			</select> 
+		</div>
+		<div class="ui-grid-a">
+			<div class="ui-block-a">
+				<a href="bgmusic.html" data-ajax="false" data-role="button">音乐</a>
+			</div>
+			<div class="ui-block-b">
+				<a href="" data-role="button">自定义</a>
+			</div>
+		</div>
+	</div>
+	<div data-role="footer" data-position="fixed" data-id="myfooter">
+		<h4>Copyright by Poseidon</h4>
+	</div>
+</div>
+
+</body>
+</html>

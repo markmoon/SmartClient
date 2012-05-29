@@ -1,0 +1,15 @@
+input[type="text"],
+input[type="password"]{
+	border: solid 1px #E5E5E5;
+	background: #FFFFFF;
+	margin: 10px 0 10px 0;
+	display:block;
+}
+
+#login_register {
+	margin-top: 10px;
+}
+
+#dongtai {
+	height: 15px;
+}

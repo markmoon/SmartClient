@@ -1,0 +1,200 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+
+<link rel="stylesheet" type="text/css" href="jqmobile/jquery.mobile-1.1.0.min.css" />
+<script src="jqmobile/jquery-1.7.1.js"></script>
+<script src="jqmobile/jquery.mobile-1.1.0.min.js"></script>
+
+<!--
+<link rel="stylesheet" type="text/css" href="jqmobile/jquery.mobile-1.0.min.css" />
+<script src="jqmobile/jquery.js"></script>
+<script src="jqmobile/jquery.mobile-1.0.min.js"></script>
+-->
+<script src="scripts/jquerycookies.js"></script>
+
+<script type="text/javascript">
+
+$( '#lamp' ).live( 'pagebeforeshow',function(event){
+	delayrun("getstatus()",300)
+	var timeid;
+	timeid = setInterval("getstatus();", 3000);
+});
+
+function control_turn(text, id)
+{
+	stas = $('#' + text).val();
+	var statu = $.cookie(text + '_turn');
+	if (statu == stas) {
+		
+	} else {
+		$.cookie(text + '_turn',stas,{expires:7});
+		var passed = $.cookie('passed');
+		var poststr = "passed=" + passed + "&turn=" + id + "&stas=" + stas;
+		rexseeAjax.submitWithCallback($.cookie('common_addr') + "turns.cgi", poststr, "UTF-8");
+	}
+}
+
+function getstatus() {
+	var passed = $.cookie('passed');
+	var poststr = "passed=" + passed + "&device=" + 101 + "&number=" + 101;
+	rexseeAjax.submitWithCallback($.cookie('common_addr') + "getstatus.cgi", poststr, "UTF-8");
+}
+
+function onAjaxReturned(ajaxUrl, response) {
+	var res = unescape(response);
+	if (ajaxUrl != $.cookie('common_addr') + "getstatus.cgi") {
+		var turn = subResponse("turn",res);
+		var statuss = subResponse("statuss",res);
+		//rexseeDialog.toast(turn + ": " + statuss, "color:red;font-size:24px;");
+	} else {
+		var keting = subResponse("turn0",res);
+		var canting = subResponse("turn1",res);
+		var chufang = subResponse("turn2",res);
+		var zhuwo = subResponse("turn3",res);
+		var ciwo = subResponse("turn4",res);
+		var kefang = subResponse("turn5",res);
+		var xishu = subResponse("turn6",res);
+		var yushi = subResponse("turn7",res);
+		var cesuo1 = subResponse("turn8",res);
+		var cesuo2 = subResponse("turn9",res);
+		$.cookie('keting_turn',keting,{expires:7});
+		$.cookie('canting_turn',canting,{expires:7});
+		$.cookie('chufang_turn',chufang,{expires:7});
+		$.cookie('zhuwo_turn',zhuwo,{expires:7});
+		$.cookie('ciwo_turn',ciwo,{expires:7});
+		$.cookie('kefang_turn',kefang,{expires:7});
+		$.cookie('xishu_turn',xishu,{expires:7});
+		$.cookie('yushi_turn',yushi,{expires:7});
+		$.cookie('cesuo1_turn',cesuo1,{expires:7});
+		$.cookie('cesuo2_turn',cesuo2,{expires:7});
+		freshslider("keting", keting);
+		freshslider("canting", canting);
+		freshslider("chufang", chufang);
+		freshslider("zhuwo", zhuwo);
+		freshslider("ciwo", ciwo);
+		freshslider("kefang", kefang);
+		freshslider("xishu", xishu);
+		freshslider("yushi", yushi);
+		freshslider("cesuo1", cesuo1);
+		freshslider("cesuo2", cesuo2);
+	}
+}
+</script>
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width,minimum-scale=1,maximum-scale=1"/>
+<title>Smarthome 电灯</title>
+</head>
+
+<body>
+
+<div data-role="page" id="lamp" data-title="Smarthome 电灯">
+	<div data-role="header" data-position="fixed">
+		<a href=""  data-rel="back" data-icon="back">返回</a>
+		<h1>电灯</h1>
+		<a href="javascript:window.location.reload();" data-icon="refresh">刷新</a>
+	</div>
+	<div data-role="content">
+		<div class="ui-grid-a">
+			<div class="ui-block-a">
+				<div data-role="fieldcontain">
+					<label for="keting">客厅</label>
+					<select name="keting" id="keting" onchange=delayrun("control_turn('keting',0)",300) data-role="slider">
+						<option value="0">关</option>
+						<option value="1">开</option>
+					</select> 
+				</div>
+			</div>
+			<div class="ui-block-b">
+				<div data-role="fieldcontain">
+					<label for="canting">餐厅</label>
+					<select name="canting" id="canting" onchange=delayrun("control_turn('canting',1)",300) data-role="slider">
+						<option value="0">关</option>
+						<option value="1">开</option>
+					</select> 
+				</div>
+			</div>
+			<div class="ui-block-a">
+				<div data-role="fieldcontain">
+					<label for="chufang">厨房</label>
+					<select name="chufang" id="chufang" onchange=delayrun("control_turn('chufang',2)",300) data-role="slider">
+						<option value="0">关</option>
+						<option value="1">开</option>
+					</select> 
+				</div>
+			</div>
+			<div class="ui-block-b">
+				<div data-role="fieldcontain">
+					<label for="zhuwo">主卧</label>
+					<select name="zhuwo" id="zhuwo" onchange=delayrun("control_turn('zhuwo',3)",300) data-role="slider">
+						<option value="0">关</option>
+						<option value="1">开</option>
+					</select> 
+				</div>
+			</div>
+			<div class="ui-block-a">
+				<div data-role="fieldcontain">
+					<label for="ciwo">次卧</label>
+					<select name="ciwo" id="ciwo" onchange=delayrun("control_turn('ciwo',4)",300) data-role="slider">
+						<option value="0">关</option>
+						<option value="1">开</option>
+					</select> 
+				</div>
+			</div>
+			<div class="ui-block-b">
+				<div data-role="fieldcontain">
+					<label for="kefang">客房</label>
+					<select name="kefang" id="kefang" onchange=delayrun("control_turn('kefang',5)",300) data-role="slider">
+						<option value="0">关</option>
+						<option value="1">开</option>
+					</select> 
+				</div>
+			</div>
+			<div class="ui-block-a">
+				<div data-role="fieldcontain">
+					<label for="xishu">洗漱</label>
+					<select name="xishu" id="xishu" onchange=delayrun("control_turn('xishu',6)",300) data-role="slider">
+						<option value="0">关</option>
+						<option value="1">开</option>
+					</select> 
+				</div>
+			</div>
+			<div class="ui-block-b">
+				<div data-role="fieldcontain">
+					<label for="yushi">浴室</label>
+					<select name="yushi" id="yushi" onchange=delayrun("control_turn('yushi',7)",300) data-role="slider">
+						<option value="0">关</option>
+						<option value="1">开</option>
+					</select> 
+				</div>
+			</div>
+			<div class="ui-block-a">
+				<div data-role="fieldcontain">
+					<label for="cesuo1">厕所</label>
+					<select name="cesuo1" id="cesuo1" onchange=delayrun("control_turn('cesuo1',8)",300) data-role="slider">
+						<option value="0">关</option>
+						<option value="1">开</option>
+					</select> 
+				</div>
+			</div>
+			<div class="ui-block-b">
+				<div data-role="fieldcontain">
+					<label for="cesuo2">次厕</label>
+					<select name="cesuo2" id="cesuo2" onchange=delayrun("control_turn('cesuo2',9)",300) data-role="slider">
+						<option value="0">关</option>
+						<option value="1">开</option>
+					</select> 
+				</div>
+			</div>
+		</div>
+	</div>
+	<!--
+	<div data-role="footer" data-position="fixed" data-id="myfooter">
+		<h4>Copyright by Poseidon</h4>
+	</div>
+	-->
+</div>
+
+</body>
+</html>

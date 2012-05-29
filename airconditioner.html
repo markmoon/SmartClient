@@ -1,0 +1,102 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+
+<link rel="stylesheet" type="text/css" href="jqmobile/jquery.mobile-1.0.min.css" />
+<script src="jqmobile/jquery.js"></script>
+<script src="jqmobile/jquery.mobile-1.0.min.js"></script>
+<script src="scripts/jquerycookies.js"></script>
+
+<style type="text/css">
+
+#dongtai {
+	margin:10px auto;
+	color:#FF0000;
+	text-align:center;
+	width:100%;
+	height:10px;
+}
+
+</style>
+
+<script type="text/javascript">
+
+$( '#air' ).live( 'pagebeforeshow',function(event){
+	freshslider('mode', 1);
+	freshslider('mode', 0);
+});
+
+function control(id)
+{
+	var passed = $.cookie('passed');
+	var mode = $('#mode').val();
+	if(mode == 1) {//learn
+		var daiti = '<img src="images/dongtai2.gif" alt="" />';
+		$('#dongtai').html(daiti);
+	}
+	var poststr = "passed=" + passed + "&conditioner=" + id + "&mode=" + mode;
+	rexseeAjax.submitWithCallback($.cookie('common_addr') + "conditioner.cgi", poststr, "UTF-8");
+}
+
+function onAjaxReturned(ajaxUrl, response) {
+	$('#dongtai').html("");
+	var res = unescape(response);
+	if (ajaxUrl == $.cookie('common_addr') + "conditioner.cgi") {
+		var condiid = subResponse("conditioner",res);
+		var statuss = subResponse("statuss",res);
+		rexseeDialog.toast(condiid + ": " + statuss, "color:red;font-size:24px;");
+	}
+	
+}
+
+</script>
+
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width,minimum-scale=1,maximum-scale=1"/>
+<title>Smarthome 空调</title>
+</head>
+
+<body>
+
+<div data-role="page" id="air" data-title="Smarthome 空调">
+	<div data-role="header" data-position="fixed">
+		<a href=""  data-rel="back" data-icon="back">返回</a>
+		<h1>空调</h1>
+		<a href="javascript:window.location.reload();" data-icon="refresh">刷新</a>
+	</div>
+	<div data-role="content">
+		<div class="ui-grid-a">
+			<div class="ui-block-a">
+				<a href="javascript:control(0)" data-role="button">开/关</a>
+			</div>
+			<div class="ui-block-b">
+				<a href="javascript:control(1)" data-role="button">模式</a>
+			</div>
+			<div class="ui-block-a">
+				<a href="javascript:control(2)" data-role="button">温度-</a>
+			</div>
+			<div class="ui-block-b">
+				<a href="javascript:control(3)" data-role="button">温度+</a>
+			</div>
+			<div class="ui-block-a">
+				<a href="javascript:control(4)" data-role="button">风速</a>
+			</div>
+			<div class="ui-block-b">
+				<a href="javascript:control(5)" data-role="button">模式</a>
+			</div>
+		</div>
+		<div id="dongtai"></div>
+	</div>
+	<div data-role="footer" data-position="fixed" data-id="myfooter">
+		<div data-role="fieldcontain">
+			<select name="mode" id="mode" onclick="javascript:control(100);" data-role="slider">
+				<option value="0">控制</option>
+				<option value="1">学习</option>
+			</select> 
+		</div>
+	</div>
+</div>
+
+</body>
+</html>

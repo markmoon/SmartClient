@@ -1,0 +1,124 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+
+<link rel="stylesheet" type="text/css" href="jqmobile/jquery.mobile-1.0.min.css" />
+<link rel="stylesheet" type="text/css" href="styles/login.css" />
+<script src="jqmobile/jquery.js"></script>
+<script src="jqmobile/jquery.mobile-1.0.min.js"></script>
+<script src="scripts/jquerycookies.js"></script>
+
+<style type="text/css">
+
+#dongtai {
+	margin:0 auto;
+	color:#FF0000;
+	text-align:center;
+	width:100%;
+	height:10px;
+}
+
+</style>
+
+<script type="text/javascript">
+
+$(document).ready(function() {
+	var name = $.cookie('login_name');
+	var passwd = $.cookie('login_passwd');
+	if (name != "" && passwd != "") {
+		$('#name').val(name);
+		$('#passwd').val(passwd);
+	}
+	$('a#login').click(function() {
+		var username = $('#name').val();
+		var password = $('#passwd').val();
+		if (username == "" || password == "") {
+			$('#dongtai').html("用户名或密码不能为空！");
+			return;
+		}
+		$.cookie('login_name',username,{expires:7});
+		$.cookie('login_passwd',password,{expires:7});
+		var daiti = '<img src="images/dongtai2.gif" alt="" />';
+		$('#dongtai').html(daiti);
+		var poststr = "username=" + username + "&password=" + password;
+		rexseeAjax.submitWithCallback($.cookie('common_addr') + "login.cgi", poststr, "UTF-8");
+	});
+	
+	$('a#register').click(function() {
+		var username = $('#name').val();
+		var password = $('#passwd').val();
+		if (username == "" || password == "") {
+			$('#dongtai').html("用户名或密码不能为空！");
+			return;
+		}
+		var daiti = '<img src="images/dongtai2.gif" alt="" />';
+		$('#dongtai').html(daiti);
+		var poststr = "username=" + username + "&password=" + password;
+		rexseeAjax.submitWithCallback($.cookie('common_addr') + "register.cgi", poststr, "UTF-8");
+	});
+});
+
+function onAjaxReturned(ajaxUrl, response) {
+	var res = unescape(response);
+	if (ajaxUrl == $.cookie('common_addr') + "login.cgi") {
+		var statuss = subResponse("statuss",res);
+		var passed = subResponse("passed",res);
+		if (statuss == 1) {
+			if (passed != null && passed != "") {
+				$.cookie('passed',passed,{expires:7});
+			}
+			window.location.href = "smarthome.html";
+		} else if (statuss == 0) {
+			$.cookie('login_name',"",{expires:7});
+			$.cookie('login_passwd',"",{expires:7});
+			$('#name').val("");
+			$('#passwd').val("");
+			$('#dongtai').html("用户名或密码错误！");
+		}
+	} else {
+		if ( res == 1) {
+			$('#dongtai').html("注册成功，你可以登录了！");
+		} else if (res == 0) {
+			$('#dongtai').html("用户名或密码错误，请再试一次！");
+		}
+	}
+}
+</script>
+
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width,minimum-scale=1,maximum-scale=1"/>
+<title>Smarthome 登录</title>
+</head>
+
+<body>
+
+<div data-role="page" id="login" data-title="Smarthome Login">
+	<div data-role="header" data-position="fixed">
+		<h1>登录</h1>
+	</div>
+	<div data-role="content">
+		<label for="name">用户:</label>
+		<input type="text" name="name" id="name" value="" />
+		<label for="passwd">密码:</label>
+		<input type="text" name="passwd" id="passwd" value="" />
+		<div id="dongtai"></div>
+		<div class="ui-grid-a" id="login_register">
+			<div class="ui-block-a">
+				<a href="" id="login" data-role="button">登录</a>
+			</div>
+			<div class="ui-block-b">
+				<a href="" id="register" data-role="button">注册</a>
+			</div>
+		</div>
+		
+	</div>
+	<!--
+	<div data-role="footer" data-position="fixed" data-id="myfooter">
+		<h4>Copyright by Poseidon</h4>
+	</div>
+	-->
+</div>
+
+</body>
+</html>

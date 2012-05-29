@@ -1,0 +1,114 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+
+<link rel="stylesheet" type="text/css" href="jqmobile/jquery.mobile-1.0.min.css" />
+<link rel="stylesheet" type="text/css" href="styles/login.css" />
+<script src="jqmobile/jquery.js"></script>
+<script src="jqmobile/jquery.mobile-1.0.min.js"></script>
+<script src="scripts/jquerycookies.js"></script>
+
+<script type="text/javascript">
+
+$(document).ready(function() {
+	$('a#zibo').click(function() {
+		$.cookie('weather_id',101120301,{expires:7});
+		window.location.href = "weather.html";
+	});
+	$('a#mianyang').click(function() {
+		$.cookie('weather_id',101270401,{expires:7});
+		window.location.href = "weather.html";
+	});
+	$('a#suzhou').click(function() {
+		$.cookie('weather_id',101190401,{expires:7});
+		window.location.href = "weather.html";
+	});
+});
+
+
+function control(id, isnow)
+{
+	var poststr = "id=" + id + "&isnow=" + 2;
+	rexseeAjax.submitWithCallback($.cookie('common_addr') + "getweatherrex.php", poststr, "UTF-8");
+}
+</script>
+
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width,minimum-scale=1,maximum-scale=1"/>
+<title>Smarthome 中心</title>
+</head>
+
+<body>
+
+<div data-role="page" id="server" data-title="Smarthome 中心">
+	<div data-role="header" data-position="fixed">
+		<a href="login.html" data-ajax="false" data-icon="home">登录</a>
+		<h1>控制中心</h1>
+		<a href="javascript:window.location.reload();" data-icon="refresh">刷新</a>
+	</div>
+	<div data-role="content">
+		<div class="ui-grid-b">
+			<div class="ui-block-a">
+				<a href="livingroom.html" data-ajax="false" data-role="button">客厅</a>
+			</div>
+			<div class="ui-block-b">
+				<a href="diningroom.html" data-ajax="false" data-role="button">餐厅</a>
+			</div>
+			<div class="ui-block-c">
+				<a href="bathroom.html" data-ajax="false" data-role="button" >洗漱</a>
+			</div>
+			<div class="ui-block-a">
+				<a href="bedroom1.html" data-ajax="false" data-role="button">主卧</a>
+			</div>
+			<div class="ui-block-b">
+				<a href="bedroom2.html" data-ajax="false" data-role="button">次卧</a>
+			</div>
+			<div class="ui-block-c">
+				<a href="bedroom3.html" data-ajax="false" data-role="button">客房</a>
+			</div>
+			<div class="ui-block-a">
+				<a href="television.html" data-ajax="false" data-role="button">电视</a>
+			</div>
+			<div class="ui-block-b">
+				<a href="airconditioner.html" data-ajax="false" data-role="button">空调</a>
+			</div>
+			<div class="ui-block-c">
+				<a href="curtains.html" data-ajax="false" data-role="button">窗帘</a>
+			</div>
+			<div class="ui-block-a">
+				<a href="lamps.html" data-ajax="false" data-role="button">电灯</a>
+			</div>
+			<div class="ui-block-b">
+				<a href="bgmusic.html" data-ajax="false" data-role="button">音乐</a>
+			</div>
+			<div class="ui-block-c">
+				<a href="hometheater.html" data-ajax="false" data-role="button">影院</a>
+			</div>
+			<div class="ui-block-a">
+				<a href="alarms.html" data-ajax="false" data-role="button">闹钟</a>
+			</div>
+			<div class="ui-block-b">
+				<a href="security.html" data-ajax="false" data-role="button">安防</a>
+			</div>
+			<div class="ui-block-c">
+				<a href="scenemode.html" data-ajax="false" data-role="button">情景</a>
+			</div>
+			<div class="ui-block-a">
+				<a href="" id="zibo" data-ajax="false" data-role="button">淄博</a>
+			</div>
+			<div class="ui-block-b">
+				<a href="" id="mianyang" data-ajax="false" data-role="button">绵阳</a>
+			</div>
+			<div class="ui-block-c">
+				<a href="" id="suzhou" data-ajax="false" data-role="button">苏州</a>
+			</div>
+		</div>
+	</div>
+	<div data-role="footer" data-position="fixed" data-id="myfooter">
+		<h4>Copyright by Poseidon</h4>
+	</div>
+</div>
+
+</body>
+</html>

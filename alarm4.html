@@ -1,0 +1,209 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+
+<link rel="stylesheet" type="text/css" href="jqmobile/jquery.mobile-1.0.min.css" />
+<script src="jqmobile/jquery.js"></script>
+<script src="jqmobile/jquery.mobile-1.0.min.js"></script>
+<script src="scripts/jquerycookies.js"></script>
+
+<script type="text/javascript">
+ 
+$( '#alarm4' ).live( 'pagebeforeshow',function(event){
+	setTimeout("getstatus(4);", 100);
+});
+ 
+function getstatus(id)
+{
+	var passed = $.cookie('passed');
+	var poststr = "passed=" + passed + "&device=" + 104 + "&number=" + id;
+	rexseeAjax.submitWithCallback($.cookie('common_addr') + "getstatus.cgi", poststr, "UTF-8");
+}
+ 
+function control(id)
+{
+	var passed = $.cookie('passed');
+	var set = $('#open' + id).val();
+	var time = $('#time' + id).val();
+	var splitt = new Array();
+	splitt = fenli(time);
+	var hour = splitt[0];
+	var minute = splitt[1];
+	if (hour < 0 && hour > 23) {
+		hour = "";
+	}
+	if (minute < 0 && minute > 59) {
+		minute = "";
+	}
+	var fangjian = $('#room' + id).val();
+	var yinyue = $('#music' + id).val();
+	var tishi = $('#note' + id).val();
+	var sun = 0, mon=0, tue=0, wed=0, thu=0, fri=0, sat=0;
+	var repeat = new Array();
+	repeat = $('#repeat' + id).val();
+	if (repeat != null) {
+		for(i = 0; i <=6;i++)
+		{
+			switch(repeat[i]) {
+				case "1":
+					mon = 1;
+					break;
+				case "2":
+					tue=1;
+					break;
+				case "3":
+					wed=1;
+					break;
+				case "4":
+					thu=1;
+					break;
+				case "5":
+					fri=1;
+					break;
+				case "6":
+					sat=1;
+					break;
+				case "7":
+					sun=1;
+					break;
+				default:
+					break;
+			}
+		}
+	}
+	var poststr = "passed=" + passed + "&id=" + id + "&set=" + set + "&hour=" + hour + "&minute=" + minute + "&fangjian=" + fangjian 
+		+ "&yinyue=" + yinyue + "&sun=" + sun + "&mon=" + mon + "&tue=" + tue + "&wed=" + wed 
+		+ "&thu=" + thu + "&fri=" + fri + "&sat=" + sat + "&tishi=" + tishi;
+	rexseeAjax.submitWithCallback($.cookie('common_addr') + "alarms.cgi", poststr, "UTF-8");
+}
+
+function onAjaxReturned(ajaxUrl, response) {
+	var res = unescape(response);
+	var id = subResponse('id', res);
+	if (ajaxUrl != $.cookie('common_addr') + "getstatus.cgi") {
+		var re = subResponse('replay', res);
+    	if (re == "8") {
+			alert("闹钟" + id + "已打开！", "color:red;font-size:24px;");
+    	} else if (re == "9") {
+			alert("闹钟" + id + "已关闭！", "color:red;font-size:24px;");
+    	}
+	} else {
+		var r_hour = subResponse('hour', res);
+    	var r_minute = subResponse('minute', res);
+		var r_fangjian = subResponse('fangjian', res);
+		var r_yinyue = subResponse('yinyue', res);
+		var r_set = subResponse('set', res);
+		var r_tishi = subResponse('tishi', res);
+		var r_sun = subResponse('sun', res);
+		var r_mon = subResponse('mon', res);
+		var r_tue = subResponse('tue', res);
+		var r_wed = subResponse('wed', res);
+		var r_thu = subResponse('thu', res);
+		var r_fri = subResponse('fri', res);
+		var r_sat = subResponse('sat', res);
+		var r_time;
+		if (r_minute < 10) {
+			r_time = r_hour + ":0" + r_minute;	
+		} else {
+			r_time = r_hour + ":" + r_minute;
+		}
+		var date = new Array();
+		date[0] = (r_mon == 1)?"1":"";
+		date[1] = (r_tue == 1)?"2":"";
+		date[2] = (r_wed == 1)?"3":"";
+		date[3] = (r_thu == 1)?"4":"";
+		date[4] = (r_fri == 1)?"5":"";
+		date[5] = (r_sat == 1)?"6":"";
+		date[6] = (r_sun == 1)?"7":"";
+		freshslider("open" + id, r_set);
+		var myselect = $('#repeat' + id);
+		myselect.val(date);
+		myselect.selectmenu('refresh');
+		$('#time' + id).val(r_time);
+		$('#room' + id).val(r_fangjian);
+		$('#room' + id).selectmenu('refresh');
+		$('#music' + id).val(r_yinyue);
+		$('#music' + id).selectmenu('refresh');
+		$('#note' + id).val(r_tishi);
+	}
+}
+</script>
+
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="viewport" content="width=device-width,minimum-scale=1,maximum-scale=1"/>
+	<title>Smarthome 闹钟</title>
+</head>
+
+<body>
+
+<div data-role="page" id="alarm4" data-title="Smarthome 闹钟四">
+	<div data-role="header" data-position="fixed">
+		<a href=""  data-rel="back" data-icon="back">返回</a>
+		<h1>闹钟四</h1>
+		<a href="javascript:getstatus(4);;" data-icon="refresh">刷新</a>
+	</div>
+	<div data-role="content">
+		<form id="alarm1">
+			<div data-role="fieldcontain">
+            	<select name="open4" id="open4" onchange=delayrun("control(4)",300) data-role="slider">
+       				<option value="0">关闭闹钟</option>
+       				<option value="1">开启闹钟</option>
+    			</select>
+    		</div>
+			<div data-role="fieldcontain">
+                <label for="repeat4">星期</label>
+    			<select data-native-menu="false" multiple="multiple" name="repeat4" id="repeat4">
+					<option>多选</option>
+       				<option value="1">星期一</option>
+       				<option value="2">星期二</option>
+       				<option value="3">星期三</option>
+       				<option value="4">星期四</option>
+					<option value="5">星期五</option>
+    				<option value="6">星期六</option>
+    				<option value="7">星期七</option>
+				</select>
+			</div>
+			<div data-role="fieldcontain">
+                <label for="time4">时间</label>
+                <input type="time" name="time4" id="time4"/>
+            </div>
+			<div class="ui-grid-a">
+			<div class="ui-block-a">
+				<div data-role="fieldcontain">
+                    <label for="room4">房间</label>
+                    <select data-native-menu="false" name="room4" id="room4">
+						<option value="1">客厅</option>
+						<option value="2">主卧</option>
+						<option value="3">次卧</option>
+						<option value="4">客房</option>
+						<option value="5">厨房</option>
+					</select>
+                </div>
+			</div>
+			<div class="ui-block-b">
+				<div data-role="fieldcontain">
+                    <label for="music4">音乐</label>
+                    	<select data-native-menu="false" name="music4" id="music4">
+						<option value="1">音乐1</option>
+						<option value="2">音乐2</option>
+						<option value="3">音乐3</option>
+						<option value="4">音乐4</option>
+						<option value="5">音乐5</option>
+					</select>
+               	</div>
+			</div>
+			</div>
+			<div data-role="fieldcontain">
+               	<label for="note4">提示</label>
+   				<input type="text" name="note4" id="note4" value=""  />
+            </div>
+		</form>
+	</div>
+	<!--
+	<div data-role="footer" data-position="fixed" data-id="myfooter">
+		<h4>Copyright by Poseidon</h4>
+	</div>
+	-->
+</div>
+</body>
+</html>

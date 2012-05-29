@@ -1,0 +1,118 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+
+<meta http-equiv="pragma" content="no-cache" />
+<meta http-equiv="cache-control" content="no-cache" />
+<meta http-equiv="expires" content="0" />
+
+<link rel="stylesheet" type="text/css" href="jqmobile/jquery.mobile-1.0.min.css" />
+<script src="jqmobile/jquery.js"></script>
+<script src="jqmobile/jquery.mobile-1.0.min.js"></script>
+<script src="scripts/jquerycookies.js"></script>
+
+<style type="text/css">
+
+#dongtai {
+	margin:10px auto;
+	color:#FF0000;
+	text-align:center;
+	width:100%;
+	height:10px;
+}
+
+</style>
+
+<script type="text/javascript">
+
+$( '#television' ).live( 'pagebeforeshow',function(event){
+	freshslider('mode', 1);
+	freshslider('mode', 0);
+});
+
+function control(id)
+{
+	var passed = $.cookie('passed');
+	var mode = $('#mode').val();
+	if(mode == 1) {//learn
+		var daiti = '<img src="images/dongtai2.gif" alt="" />';
+		$('#dongtai').html(daiti);
+	}
+	var poststr = "passed=" + passed + "&television=" + id + "&mode=" + mode;
+	rexseeAjax.submitWithCallback($.cookie('common_addr') + "television.cgi", poststr, "UTF-8");
+}
+
+function onAjaxReturned(ajaxUrl, response) {
+	$('#dongtai').html("");
+	var res = unescape(response);
+	if (ajaxUrl == $.cookie('common_addr') + "television.cgi") {
+		var teleid = subResponse("television",res);
+		var statuss = subResponse("statuss",res);
+		rexseeDialog.toast(teleid + ": " + statuss, "color:red;font-size:24px;");
+	}
+}
+
+</script>
+
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width,minimum-scale=1,maximum-scale=1"/>
+<title>Smarthome 电视</title>
+</head>
+
+<body>
+
+<div data-role="page" id="television" data-title="Smarthome 电视">
+	<div data-role="header" data-position="fixed">
+		<a href=""  data-rel="back" data-icon="back">返回</a>
+		<h1>电视</h1>
+		<a href="javascript:window.location.reload();" data-icon="refresh">刷新</a>
+	</div>
+	<div data-role="content">
+		<div class="ui-grid-a">
+			<div class="ui-block-a">
+				<a href="javascript:control(0);" id="onoff" data-role="button">开/关</a>
+			</div>
+			<div class="ui-block-b">
+				<a href="javascript:control(1);" id="mute" data-role="button">静音</a>
+			</div>
+			<div class="ui-block-a">
+				<a href="javascript:control(2);" id="progs" data-role="button">节目-</a>
+			</div>
+			<div class="ui-block-b">
+				<a href="javascript:control(3);" id="proga" data-role="button">节目+</a>
+			</div>
+			<div class="ui-block-a">
+				<a href="javascript:control(4);" id="voics" data-role="button">音量-</a>
+			</div>
+			<div class="ui-block-b">
+				<a href="javascript:control(5);" id="voica" data-role="button">音量+</a>
+			</div>
+			<div class="ui-block-a">
+				<a href="javascript:control(6);" id="menu" data-role="button">菜单</a>
+			</div>
+			<div class="ui-block-b">
+				<a href="javascript:control(7);" id="back" data-role="button">返回</a>
+			</div>
+			<div class="ui-block-a">
+				<a href="javascript:control(8);" id="video" data-role="button">视频</a>
+			</div>
+			<div class="ui-block-b">
+				<a href="javascript:control(9);" id="fmer" data-role="button">收音</a>
+			</div>
+		</div>
+		<div id="dongtai"></div>
+	</div>
+	<div data-role="footer" data-position="fixed" data-id="myfooter">
+		<div data-role="fieldcontain">
+			<select name="mode" id="mode" onclick="javascript:control(100);" data-role="slider">
+				<option value="0">控制</option>
+				<option value="1">学习</option>
+			</select> 
+		</div>
+	</div>
+</div>
+
+
+</body>
+</html>

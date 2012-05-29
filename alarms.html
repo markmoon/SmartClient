@@ -1,0 +1,94 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+
+	<link rel="stylesheet" type="text/css" href="jqmobile/jquery.mobile-1.0.min.css" />
+	<script src="jqmobile/jquery.js"></script>
+	<script src="jqmobile/jquery.mobile-1.0.min.js"></script>
+	<script src="scripts/jquerycookies.js"></script>
+
+<script type="text/javascript">
+ 
+$( '#alarm' ).live( 'pagebeforeshow',function(event){
+	setTimeout("getstatus(100);", 100);
+});
+ 
+function getstatus(id)
+{
+	var passed = $.cookie('passed');
+	var poststr = "passed=" + passed + "&device=" + 104 + "&number=" + id;
+	rexseeAjax.submitWithCallback($.cookie('common_addr') + "getstatus.cgi", poststr, "UTF-8");
+}
+
+
+function onAjaxReturned(ajaxUrl, response) {
+	var res = unescape(response);
+	for (i = 1; i <= 5; i ++) {
+		var r_hour = subResponse('hour' + i, res);
+    	var r_minute = subResponse('minute' + i, res);
+		var r_fangjian = subResponse('fangjian' + i, res);
+		var r_set = subResponse('set' + i, res);
+		var r_time;
+		if (r_minute < 10) {
+			r_time = r_hour + ":0" + r_minute;	
+		} else {
+			r_time = r_hour + ":" + r_minute;
+		}
+		var room = new Array();
+		room[0] = "客厅";
+		room[1] = "主卧";
+		room[2] = "次卧";
+		room[3] = "客房";
+		room[4] = "厨房";
+		room[5] = "未开启";
+		room[6] = "已开启";
+			
+		var text = room[r_fangjian-1] + " " + r_time + ". " + room[5+parseInt(r_set)];
+		$('#arm' + i).html(text);
+	}
+}
+</script>
+
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="viewport" content="width=device-width,minimum-scale=1,maximum-scale=1"/>
+	<title>Smarthome 闹钟</title>
+</head>
+
+<body>
+
+<div data-role="page" id="alarm" data-title="Smarthome 闹钟">
+	<div data-role="header" data-position="fixed">
+		<a href="smarthome.html" data-icon="home">首页</a>
+		<h1>闹钟</h1>
+		<a href="javascript:getstatus(100);" data-icon="refresh">刷新</a>
+	</div>
+	<div data-role="content">
+		<ul data-role="listview">
+　　			<li>
+				<a href="alarm1.html" data-ajax="false">闹钟一</a>
+				<p class="ui-li-count" id="arm1"></p>
+			</li>
+　　			<li>
+				<a href="alarm2.html" data-ajax="false">闹钟二</a>
+				<p class="ui-li-count" id="arm2"></p>
+			</li>
+　　			<li>
+				<a href="alarm3.html" data-ajax="false">闹钟三</a>
+				<p class="ui-li-count" id="arm3"></p>
+			</li>
+　　			<li>
+				<a href="alarm4.html" data-ajax="false">闹钟四</a>
+				<p class="ui-li-count" id="arm4"></p>
+			</li>
+　　			<li>
+				<a href="alarm5.html" data-ajax="false">闹钟五</a>
+				<p class="ui-li-count" id="arm5"></p>
+			</li>
+		</ul>
+	</div>
+	<div data-role="footer" data-position="fixed" data-id="myfooter">
+		<h4>Copyright by Poseidon</h4>
+	</div>
+</div>
+</body>
+</html>

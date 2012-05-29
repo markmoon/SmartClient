@@ -1,0 +1,134 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+
+<link rel="stylesheet" type="text/css" href="jqmobile/jquery.mobile-1.0.min.css" />
+<script src="jqmobile/jquery.js"></script>
+<script src="jqmobile/jquery.mobile-1.0.min.js"></script>
+<script src="scripts/jquerycookies.js"></script>
+
+<script type="text/javascript">
+
+$(document).ready(function() {
+	var weather_id = $.cookie('weather_id');
+	control(weather_id, 2);
+});
+
+function totext(arr)
+{
+	var atfir = "";
+	var atmin = "";
+	var nowtime = new Date();
+	var h = nowtime.getHours();
+	var m = nowtime.getMinutes();
+	if (h >= 21 || h < 6) {
+		atfir = "你";
+	} else if (h >=6 && h < 8) {
+		atfir = "早上";
+	} else if (h >=8 && h < 12) {
+		atfir = "上午";
+	} else if (h >=12 && h < 14) {
+		atfir = "中午";
+	} else if (h >=14 && h < 18) {
+		atfir = "下午";
+	} else if (h >=18 && h < 21) {
+		atfir = "晚上";
+	}
+	if (m > 0) {
+		atmin = m + "分,";
+	} else {
+		atmin = ",";
+	}
+	var tts = atfir + "好,现在是" + h + "点" + atmin + arr.city + "市温度是" + arr.temp + "摄氏度,今天是" + arr.date_y + "," + arr.week + ",温度范围" + arr.temp1 + "," + arr.weather1 + "," + arr.WD + arr.WS + ",湿度为" + arr.SD + "," + arr.index + "," + arr.index_d;
+	return tts;
+}
+
+function control(id, isnow)
+{
+	var poststr = "id=" + id + "&isnow=" + 2;
+	rexseeAjax.submitWithCallback("http://www.browningweb.com/weather/getweatherrex.php", poststr, "UTF-8");
+}
+function onAjaxReturned(ajaxUrl, response) {
+	var ress = unescape(response);
+	var res = eval("(" + ress + ")");
+	var tts = totext(res);
+		alert(tts);
+		$('#city').html(res.city);
+		$('#temp').html("温度：" + res.temp + "摄氏度");
+		$('#temp1').html(res.temp1);
+		$('#date').html(res.date_y);
+		$('#week').html(res.week);
+		$('#ziwa').html("紫外线：" + res.index_uv);
+		$('#shus').html("舒适度：" + res.index);
+		$('#weat').html(res.weather1);
+		$('#wind').html(res.WD + res.WS);
+		$('#shid').html("湿度：" + res.SD);
+		$('#xc').html("洗车指数：" + res.index_xc);
+		$('#cl').html("晨练指数：" + res.index_cl);
+		$('#ls').html("晾晒指数：" + res.index_ls);
+		//$('#zb').html("装逼指数：" + res.index_zb);
+		$('#zb').html("装逼指数：" + "适当");
+		$('#tr').html("旅游指数：" + res.index_tr);
+		$('#ag').html("过敏指数：" + res.index_ag);
+}
+</script>
+
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width,minimum-scale=1,maximum-scale=1"/>
+<title>Smarthome 天气</title>
+</head>
+
+<body>
+
+<div data-role="page" id="weather" data-title="Smarthome 天气">
+	<div data-role="header" data-position="fixed">
+		<a href=""  data-rel="back" data-icon="back">返回</a>
+		<h1>天气</h1>
+		<a href="javascript:window.location.reload();" data-icon="refresh">刷新</a>
+	</div>
+	<div data-role="content">
+		<div class="ui-grid-a">
+			<div class="ui-block-a">
+				<ul data-role="listview" data-inset="true">
+					<li id="city">淄博</li>
+					<li id="date">2012年4月11日</li>
+					<li id="weat">多云转小雨</li>
+					<li id="temp1">16℃~8℃</li>
+					<li id="ziwa">紫外线</li>
+				</ul>
+			</div>
+			<div class="ui-block-b">
+				<ul data-role="listview" data-inset="true">
+					<li id="temp">温度：7摄氏度</li>
+					<li id="week">星期三</li>
+					<li id="wind">南风1级</li>
+					<li id="shid">湿度：73%</li>
+					<li id="shus">舒适度：舒适</li>
+				</ul>
+			</div>
+		</div>
+		<div class="ui-grid-a">
+			<div class="ui-block-a">
+				<ul data-role="listview" data-inset="true">
+					<li id="cl">晨练指数：较不宜</li>
+					<li id="ls">晾晒指数：不宜</li>
+					<li id="xc">洗车指数：不宜</li>
+				</ul>
+			</div>
+			<div class="ui-block-b">
+				<ul data-role="listview" data-inset="true">
+					<li id="tr">旅游指数：适宜</li>
+					<li id="ag">过敏指数：极易发</li>
+					<li id="zb">装逼指数：适当</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	<div data-role="footer" data-position="fixed" data-id="myfooter">
+		<h4>Copyright by Poseidon</h4>
+	</div>
+</div>
+
+</body>
+</html>

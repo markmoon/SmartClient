@@ -1,0 +1,4 @@
+修改记录1：
+修改前：.ui-field-contain{padding:1.5em 0;margin:0;border-bottom-width:1px;overflow:visible}
+修改后：.ui-field-contain{margin:0;border-bottom-width:1px;overflow:visible}
+去掉了：padding:1.5em 0;

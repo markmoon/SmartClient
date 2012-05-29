@@ -1,0 +1,141 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+
+<link rel="stylesheet" type="text/css" href="jqmobile/jquery.mobile-1.0.min.css" />
+<script src="jqmobile/jquery.js"></script>
+<script src="jqmobile/jquery.mobile-1.0.min.js"></script>
+<script src="scripts/jquerycookies.js"></script>
+
+<script type="text/javascript">
+
+$(document).ready(function() {
+	delayrun("getstatus()",300)
+	var timeid;
+	timeid = setInterval("getstatus();", 3000);
+	
+	$("input[name='bedtwo']").click(function() {
+		var stas = $("input[name='bedtwo']:checked").val();
+		var bedtwo = $.cookie('bedtwo_curtain');
+		if (bedtwo == stas) {
+			
+		} else {
+			$.cookie('bedtwo_curtain',stas,{expires:7});
+			control_curtain(2, stas);
+		}
+	});
+});
+
+function control_turn(text, id)
+{
+	stas = $('#' + text).val();
+	var statu = $.cookie(text + '_turn');
+	if (statu == stas) {
+		
+	} else {
+		$.cookie(text + '_turn',stas,{expires:7});
+		var passed = $.cookie('passed');
+		var poststr = "passed=" + passed + "&turn=" + id + "&stas=" + stas;
+		rexseeAjax.submitWithCallback($.cookie('common_addr') + "turns.cgi", poststr, "UTF-8");
+	}
+}
+
+function control_curtain(id, status)
+{
+	var passed = $.cookie('passwd');
+	var poststr = "passed=" + passed + "&curtain=" + id + "&number=" + status;
+	rexseeAjax.submitWithCallback($.cookie('common_addr') + "curtains.cgi", poststr, "UTF-8");
+}
+
+function getstatus() {
+	var passed = $.cookie('passed');
+	var poststr = "passed=" + passed + "&device=" + 203 + "&number=" + 4;
+	rexseeAjax.submitWithCallback($.cookie('common_addr') + "getstatus.cgi", poststr, "UTF-8");
+}
+
+function onAjaxReturned(ajaxUrl, response) {
+	var res = unescape(response);
+	if (ajaxUrl == $.cookie('common_addr') + "getstatus.cgi") {
+		var ciwo = subResponse("turn4",res);
+		var curtain2 = subResponse("curtain2",res);
+		$.cookie('ciwo_turn',ciwo,{expires:7});
+		$.cookie('bedtwo_curtain',curtain2,{expires:7});
+		freshslider("ciwo", ciwo);
+		$('#bedtwo_' + curtain2).attr("checked",true).checkboxradio("refresh");
+		$("input[type='radio']").checkboxradio("refresh");
+	} else if (ajaxUrl == $.cookie('common_addr') + "turns.cgi"){
+		var turn = subResponse("turn",res);
+		var statuss = subResponse("statuss",res);
+		rexseeDialog.toast(turn + ": " + statuss, "color:red;font-size:24px;");
+	} else {
+		var curtain = subResponse("curtainid",res);
+		var statuss = subResponse("statuss",res);
+		var curtains = new Array(4);
+    	curtains[0] = "客厅";
+    	curtains[1] = "主卧";
+    	curtains[2] = "次卧";
+    	curtains[3] = "客房";
+    	var zhuangtai = new Array(3);
+    	zhuangtai[0] = "已经关闭";
+    	zhuangtai[1] = "打开一半";
+    	zhuangtai[2] = "完全打开";
+    	rexseeDialog.toast(curtains[curtain] + "窗帘：" + zhuangtai[statuss], "color:red;font-size:24px;");
+	}
+}
+</script>
+
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width,minimum-scale=1,maximum-scale=1"/>
+<title>Smarthome 次卧</title>
+</head>
+
+<body>
+
+<div data-role="page" id="bedtwo" data-title="Smarthome 次卧">
+	<div data-role="header" data-position="fixed">
+		<a href=""  data-rel="back" data-icon="back">返回</a>
+		<h1>次卧</h1>
+		<a href="javascript:window.location.reload();" data-icon="refresh">刷新</a>
+	</div>
+	<div data-role="content">
+		<div data-role="fieldcontain">
+			<label for="ciwo">次卧灯</label>
+			<select name="ciwo" id="ciwo" onchange=delayrun("control_turn('ciwo',4)",300) data-role="slider">
+				<option value="0">关</option>
+				<option value="1">开</option>
+			</select> 
+		</div>
+		<div data-role="fieldcontain">
+    		<fieldset data-role="controlgroup" data-type="horizontal">
+        		<legend>次卧窗帘</legend>
+        		<input type="radio" name="bedtwo" id="bedtwo_0" value="0" />
+        		<label for="bedtwo_0">关闭</label>
+        		<input type="radio" name="bedtwo" id="bedtwo_1" value="1"  />
+        		<label for="bedtwo_1">一半</label>
+        		<input type="radio" name="bedtwo" id="bedtwo_2" value="2"  />
+        		<label for="bedtwo_2">打开</label>
+    		</fieldset>
+		</div>
+		<div class="ui-grid-a">
+			<div class="ui-block-a">
+				<a href="television.html" data-ajax="false" data-role="button">电视</a>
+			</div>
+			<div class="ui-block-b">
+				<a href="airconditioner.html" data-ajax="false" data-role="button">空调</a>
+			</div>
+			<div class="ui-block-a">
+				<a href="bgmusic.html" data-ajax="false" data-role="button">音乐</a>
+			</div>
+			<div class="ui-block-b">
+				<a href="hometheater.html" data-ajax="false" data-role="button">睡眠</a>
+			</div>
+		</div>
+	</div>
+	<div data-role="footer" data-position="fixed" data-id="myfooter">
+		<h4>Copyright by Poseidon</h4>
+	</div>
+</div>
+
+</body>
+</html>
